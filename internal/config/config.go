@@ -1,10 +1,13 @@
 package config
 
 import (
+	"book-storage/pkg/postgres"
+
 	"github.com/spf13/viper"
 )
 
 type Config struct {
+	postgres.Config
 	HttpServerPort string `yaml:"port"`
 }
 
