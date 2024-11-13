@@ -15,8 +15,8 @@ import (
 )
 
 type DB struct {
-	db   *sql.DB
-	psql squirrel.StatementBuilderType
+	Db      *sql.DB
+	Builder squirrel.StatementBuilderType
 }
 
 func New(ctx context.Context, config *config.Config) (*DB, error) {
