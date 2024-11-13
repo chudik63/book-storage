@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"book-storage/internal/config"
 	"book-storage/pkg/logger"
 	"context"
 	"database/sql"
@@ -13,24 +14,16 @@ import (
 	"go.uber.org/zap"
 )
 
-type Config struct {
-	Host     string `yaml:"host"`
-	Port     string `yaml:"port"`
-	User     string `yaml:"user"`
-	Password string `yaml:"password"`
-	DBName   string `yaml:"dbname"`
-	SSLMode  string `yaml:"sslmode"`
-}
-
 type DB struct {
 	db   *sql.DB
 	psql squirrel.StatementBuilderType
 }
 
-func New(ctx context.Context, config Config) (*DB, error) {
+func New(ctx context.Context, config *config.Config) (*DB, error) {
 	logs := logger.GetLoggerFromCtx(ctx)
 
-	dsn := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable host=%s port=%s", config.User, config.Password, config.DBName, config.Host, config.Port)
+	dsn := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable host=%s port=%s", config.Database.User, config.Database.Password, config.Database.DBName, config.Database.Host, config.Database.Port)
+
 	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		logs.Error(ctx, "can`t connecting to database", zap.String("error:", err.Error()))

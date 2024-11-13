@@ -1,14 +1,21 @@
 package config
 
 import (
-	"book-storage/pkg/postgres"
-
 	"github.com/spf13/viper"
 )
 
 type Config struct {
-	postgres.Config
-	HttpServerPort string `yaml:"port"`
+	Server struct {
+		HttpServerPort string `yaml:"port"`
+	}
+	Database struct {
+		Host     string `yaml:"host"`
+		Port     string `yaml:"port"`
+		User     string `yaml:"user"`
+		Password string `yaml:"password"`
+		DBName   string `yaml:"dbname"`
+		SSLMode  string `yaml:"sslmode"`
+	}
 }
 
 func LoadConfig() (*Config, error) {
@@ -24,6 +31,5 @@ func LoadConfig() (*Config, error) {
 	if err := viper.Unmarshal(&cfg); err != nil {
 		return nil, err
 	}
-
 	return &cfg, nil
 }

@@ -8,7 +8,7 @@ import (
 func main() {
 	cfg, err := config.LoadConfig()
 	if err != nil {
-
+		panic(err)
 	}
 
 	app.Run(cfg)

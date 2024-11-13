@@ -13,7 +13,7 @@ func Run(cfg *config.Config) {
 	mainLogger := logger.New()
 	ctx = context.WithValue(ctx, logger.LoggerKey, mainLogger)
 
-	db, err := postgres.New(ctx, cfg.Config)
+	db, err := postgres.New(ctx, cfg)
 	if err != nil {
 		panic(err)
 	}
