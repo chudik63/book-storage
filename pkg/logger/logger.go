@@ -1,13 +1,7 @@
 package logger
 
 import (
-	"context"
-
 	"go.uber.org/zap"
-)
-
-const (
-	LoggerKey = "logger"
 )
 
 type Logger interface {
@@ -33,8 +27,4 @@ func New() Logger {
 	return &logger{
 		logger: zapLogger,
 	}
-}
-
-func GetLoggerFromCtx(ctx context.Context) Logger {
-	return ctx.Value(LoggerKey).(Logger)
 }
