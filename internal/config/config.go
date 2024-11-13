@@ -6,11 +6,11 @@ import (
 
 type Config struct {
 	Server struct {
-		HttpServerPort string `yaml:"port"`
+		HttpServerPort string `yaml:"httpServerPort"`
 	}
 	Database struct {
 		Host     string `yaml:"host"`
-		Port     string `yaml:"port"`
+		DBPort   string `yaml:"dbport"`
 		User     string `yaml:"user"`
 		Password string `yaml:"password"`
 		DBName   string `yaml:"dbname"`
