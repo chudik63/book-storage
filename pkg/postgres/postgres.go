@@ -34,6 +34,8 @@ func New(ctx context.Context, config *config.Config) (*DB, error) {
 		logs.Error(ctx, "failed connecting to database", zap.String("error:", err.Error()))
 	}
 
+	logs.Info(ctx, "database connected")
+
 	psql := squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar)
 
 	return &DB{db, psql}, nil
