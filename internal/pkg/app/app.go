@@ -7,14 +7,10 @@ import (
 	"context"
 )
 
-const (
-	serviceName = "bookStorage"
-)
-
 func Run(cfg *config.Config) {
 	ctx := context.Background()
 
-	mainLogger := logger.New(serviceName)
+	mainLogger := logger.New()
 	ctx = context.WithValue(ctx, logger.LoggerKey, mainLogger)
 
 	db, err := postgres.New(ctx, cfg.Config)

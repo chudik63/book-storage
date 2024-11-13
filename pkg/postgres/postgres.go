@@ -4,7 +4,10 @@ import (
 	"book-storage/pkg/logger"
 	"context"
 	"database/sql"
+
 	"fmt"
+
+	_ "github.com/lib/pq"
 
 	"github.com/Masterminds/squirrel"
 	"go.uber.org/zap"

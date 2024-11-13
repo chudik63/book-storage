@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS history(
+CREATE TABLE IF NOT EXISTS books(
     id serial PRIMARY KEY,
     genre VARCHAR(255),
     title VARCHAR(255),
