@@ -1,0 +1,5 @@
+DROP TABLE IF EXISTS storages;
+
+DROP TABLE IF EXISTS genres;
+
+DROP TABLE IF EXISTS storage_genre;
