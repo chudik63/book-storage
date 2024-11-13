@@ -1,4 +1,4 @@
-package server
+package http
 
 import (
 	"book-storage/internal/config"
@@ -16,7 +16,7 @@ type Server struct {
 	shutdownTimeout time.Duration
 }
 
-func New(cfg *config.Config, handler http.Handler) *Server {
+func NewServer(cfg *config.Config, handler http.Handler) *Server {
 	return &Server{
 		httpServer: &http.Server{
 			Addr:    ":" + cfg.Server.HttpServerPort,
@@ -31,6 +31,7 @@ func (s *Server) Run() error {
 	if err != http.ErrServerClosed {
 		return err
 	}
+
 	return nil
 }
 
