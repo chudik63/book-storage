@@ -26,15 +26,15 @@ func New(ctx context.Context, config *config.Config) (*DB, error) {
 
 	db, err := sql.Open("postgres", dsn)
 	if err != nil {
-		logs.Error(ctx, "can`t connecting to database", zap.String("error:", err.Error()))
+		logs.Error("can`t connecting to database", zap.String("error:", err.Error()))
 	}
 	defer db.Close()
 
 	if err := db.Ping(); err != nil {
-		logs.Error(ctx, "failed connecting to database", zap.String("error:", err.Error()))
+		logs.Error("failed connecting to database", zap.String("error:", err.Error()))
 	}
 
-	logs.Info(ctx, "database connected")
+	logs.Info("database connected")
 
 	psql := squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar)
 
