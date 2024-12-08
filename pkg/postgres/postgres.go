@@ -3,6 +3,7 @@ package postgres
 import (
 	"book-storage/internal/config"
 	"book-storage/pkg/logger"
+	"context"
 	"database/sql"
 
 	"fmt"
@@ -18,22 +19,24 @@ type DB struct {
 	Builder squirrel.StatementBuilderType
 }
 
-func New(logs logger.Logger, config *config.Config) (*DB, error) {
+func New(ctx context.Context, config *config.Config) (*DB, error) {
+	logs := logger.GetLoggerFromCtx(ctx)
+
 	dsn := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable host=%s port=%s", config.Database.User, config.Database.Password, config.Database.DBName, config.Database.Host, config.Database.DBPort)
 
 	db, err := sql.Open("postgres", dsn)
 	if err != nil {
-		logs.Error("can`t connecting to database", zap.String("error:", err.Error()))
+		logs.Error(ctx, "can`t connecting to database", zap.String("error:", err.Error()))
 		return nil, err
 	}
 	defer db.Close()
 
 	if err := db.Ping(); err != nil {
-		logs.Error("failed connecting to database", zap.String("error:", err.Error()))
+		logs.Error(ctx, "failed connecting to database", zap.String("error:", err.Error()))
 		return nil, err
 	}
 
-	logs.Info("database connected")
+	logs.Info(ctx, "database connected")
 
 	psql := squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar)
 

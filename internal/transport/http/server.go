@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	_defaultShutdownTimeout = 3 * time.Second
+	_defaultShutdownTimeout = 5 * time.Second
 )
 
 type Server struct {

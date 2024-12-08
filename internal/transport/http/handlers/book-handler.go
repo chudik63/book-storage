@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"book-storage/pkg/logger"
+	"context"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -12,9 +13,9 @@ type BookHandler struct {
 	l logger.Logger
 }
 
-func NewBookHandler(logs logger.Logger, mux *mux.Router) {
+func NewBookHandler(ctx context.Context, mux *mux.Router) {
 	bookHandler := &BookHandler{
-		l: logs,
+		l: logger.GetLoggerFromCtx(ctx),
 	}
 
 	mux.HandleFunc("/api/books", bookHandler.CreateBook).Methods("POST")
@@ -25,21 +26,21 @@ func NewBookHandler(logs logger.Logger, mux *mux.Router) {
 }
 
 func (h *BookHandler) CreateBook(w http.ResponseWriter, r *http.Request) {
-	h.l.Info("create book handled")
+
 }
 
 func (h *BookHandler) ReadBook(w http.ResponseWriter, r *http.Request) {
-	h.l.Info("read book handled")
+
 }
 
 func (h *BookHandler) UpdateBook(w http.ResponseWriter, r *http.Request) {
-	h.l.Info("update book handled")
+
 }
 
 func (h *BookHandler) DeleteBook(w http.ResponseWriter, r *http.Request) {
-	h.l.Info("delete book handled")
+
 }
 
 func (h *BookHandler) ListBook(w http.ResponseWriter, r *http.Request) {
-	h.l.Info("list book handled")
+
 }

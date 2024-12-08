@@ -2,16 +2,17 @@ package http
 
 import (
 	"book-storage/internal/transport/http/handlers"
-	"book-storage/pkg/logger"
+	"context"
 	"net/http"
 
 	"github.com/gorilla/mux"
 )
 
-func NewBookStorageMux(logs logger.Logger) http.Handler {
+func NewBookStorageMux(ctx context.Context) http.Handler {
 	router := mux.NewRouter()
 
-	handlers.NewBookHandler(logs, router)
+	handlers.NewBookHandler(ctx, router)
+	handlers.NewUserHandler(ctx, router)
 
 	return router
 }
