@@ -9,6 +9,8 @@ import (
 	sq "github.com/Masterminds/squirrel"
 )
 
+type Creds map[string]interface{}
+
 type UserRepository struct {
 	db postgres.DB
 }
@@ -21,8 +23,8 @@ func (r *UserRepository) Create(ctx context.Context, user *models.User) (int64, 
 	var id int64
 
 	err := sq.Insert("public.users").
-		Columns("name", "password").
-		Values(user.Name, user.Password).
+		Columns("name", "login", "password").
+		Values(user.Name, user.Login, user.Password).
 		Suffix("RETURNING id").
 		PlaceholderFormat(sq.Dollar).
 		RunWith(r.db).
@@ -32,12 +34,12 @@ func (r *UserRepository) Create(ctx context.Context, user *models.User) (int64, 
 	return id, err
 }
 
-func (r *UserRepository) Read(ctx context.Context, userID int64) (*models.User, error) {
+func (r *UserRepository) GetByCredentials(ctx context.Context, equations Creds) (*models.User, error) {
 	var user models.User
 
 	err := sq.Select("*").
 		From("public.users").
-		Where(sq.Eq{"id": strconv.FormatInt(userID, 10)}).
+		Where(equations).
 		PlaceholderFormat(sq.Dollar).
 		RunWith(r.db).
 		QueryRow().
