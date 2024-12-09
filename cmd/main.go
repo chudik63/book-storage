@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	cfg, err := config.LoadConfig()
+	cfg, err := config.New()
 	if err != nil {
 		panic(err)
 	}

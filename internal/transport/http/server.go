@@ -19,7 +19,7 @@ type Server struct {
 func NewServer(cfg *config.Config, handler http.Handler) *Server {
 	return &Server{
 		httpServer: &http.Server{
-			Addr:    ":" + cfg.Server.HttpServerPort,
+			Addr:    ":" + cfg.ServerPort,
 			Handler: handler,
 		},
 		shutdownTimeout: _defaultShutdownTimeout,

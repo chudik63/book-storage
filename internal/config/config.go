@@ -1,35 +1,30 @@
 package config
 
 import (
-	"github.com/spf13/viper"
+	"book-storage/pkg/postgres"
+	"errors"
+
+	"github.com/ilyakaznacheev/cleanenv"
 )
 
 type Config struct {
-	Server struct {
-		HttpServerPort string `yaml:"httpServerPort"`
-	}
-	Database struct {
-		Host     string `yaml:"host"`
-		DBPort   string `yaml:"dbport"`
-		User     string `yaml:"user"`
-		Password string `yaml:"password"`
-		DBName   string `yaml:"dbname"`
-		SSLMode  string `yaml:"sslmode"`
-	}
+	postgres.Config
+	MigrationsPath string `env:"MIGRATIONS_PATH"`
+	ServerPort     string `env:"SERVER_PORT"`
 }
 
-func LoadConfig() (*Config, error) {
-	viper.SetConfigName("config")
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath("configs")
+func New() (*Config, error) {
+	cfg := Config{}
 
-	if err := viper.ReadInConfig(); err != nil {
+	err := cleanenv.ReadEnv(&cfg)
+
+	if cfg == (Config{}) {
+		return nil, errors.New("config is empty")
+	}
+
+	if err != nil {
 		return nil, err
 	}
 
-	var cfg Config
-	if err := viper.Unmarshal(&cfg); err != nil {
-		return nil, err
-	}
 	return &cfg, nil
 }
