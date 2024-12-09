@@ -13,13 +13,12 @@ import (
 	"go.uber.org/zap"
 )
 
-func Run(cfg *config.Config) {
-	mainLogger := logger.New()
-	ctx := context.WithValue(context.Background(), logger.LoggerKey, mainLogger)
+func Run(ctx context.Context, cfg *config.Config) {
+	logs := logger.GetLoggerFromCtx(ctx)
 
 	db, err := postgres.New(ctx, &cfg.Config)
 	if err != nil {
-		panic(err)
+		logs.Fatal(ctx, zap.String("err", err.Error()))
 	}
 
 	_ = db
@@ -33,7 +32,7 @@ func Run(cfg *config.Config) {
 
 	go func() {
 		if err := httpServer.Run(); err != nil {
-			mainLogger.Error(ctx, "failed starting the server", zap.String("err: ", err.Error()))
+			logs.Error(ctx, "failed starting the server", zap.String("err: ", err.Error()))
 		}
 	}()
 
@@ -43,6 +42,6 @@ func Run(cfg *config.Config) {
 	<-c
 
 	if err := httpServer.Stop(); err != nil {
-		mainLogger.Error(ctx, "failed shutting down the server", zap.String("err: ", err.Error()))
+		logs.Error(ctx, "failed shutting down the server", zap.String("err: ", err.Error()))
 	}
 }
