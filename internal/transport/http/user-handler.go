@@ -4,10 +4,14 @@ import (
 	"book-storage/internal/models"
 	"book-storage/pkg/logger"
 	"context"
+	"encoding/json"
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"go.uber.org/zap"
 )
+
+type Response map[string]interface{}
 
 type UserService interface {
 	Create(ctx context.Context, user *models.User) (int64, error)
@@ -18,13 +22,13 @@ type UserService interface {
 
 type UserHandler struct {
 	userService UserService
-	l           logger.Logger
+	logger      logger.Logger
 }
 
 func NewUserHandler(ctx context.Context, mux *mux.Router, service UserService) {
 	userHandler := &UserHandler{
 		userService: service,
-		l:           logger.GetLoggerFromCtx(ctx),
+		logger:      logger.GetLoggerFromCtx(ctx),
 	}
 
 	mux.HandleFunc("/api/users", userHandler.CreateUser).Methods("POST")
@@ -34,7 +38,30 @@ func NewUserHandler(ctx context.Context, mux *mux.Router, service UserService) {
 }
 
 func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
+	var user models.User
 
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		h.logger.Error(r.Context(), "CreateUser: can`t decode request", zap.String("err", err.Error()))
+		return
+	}
+
+	id, err := h.userService.Create(r.Context(), &user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		h.logger.Error(r.Context(), "CreateUser: can`t create user", zap.String("err", err.Error()))
+		return
+	}
+
+	response := Response{
+		"id": id,
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+
+	json.NewEncoder(w).Encode(response)
 }
 
 func (h *UserHandler) ReadUser(w http.ResponseWriter, r *http.Request) {
