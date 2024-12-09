@@ -16,7 +16,7 @@ func main() {
 
 	cfg, err := config.New()
 	if err != nil {
-		mainLogger.Fatal(ctx, zap.String("err", err.Error()))
+		mainLogger.Fatal(ctx, "can`t load config", zap.String("err", err.Error()))
 	}
 
 	migrator.Start(ctx, cfg)

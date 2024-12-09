@@ -2,6 +2,8 @@ package app
 
 import (
 	"book-storage/internal/config"
+	"book-storage/internal/repository"
+	"book-storage/internal/service"
 	"book-storage/internal/transport/http"
 	"book-storage/pkg/logger"
 	"book-storage/pkg/postgres"
@@ -10,25 +12,25 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/gorilla/mux"
 	"go.uber.org/zap"
 )
 
 func Run(ctx context.Context, cfg *config.Config) {
 	logs := logger.GetLoggerFromCtx(ctx)
 
-	db, err := postgres.New(ctx, &cfg.Config)
-	if err != nil {
-		logs.Fatal(ctx, zap.String("err", err.Error()))
-	}
+	db := postgres.New(ctx, &cfg.Config)
 
-	_ = db
+	userRepository := repository.NewUserRepository(db)
 
-	// create repos
-	// create services
+	userService := service.NewUserService(userRepository)
 
-	mux := http.NewBookStorageMux(ctx)
+	router := mux.NewRouter()
 
-	httpServer := http.NewServer(cfg, mux)
+	http.NewBookHandler(ctx, router)
+	http.NewUserHandler(ctx, router, userService)
+
+	httpServer := http.NewServer(cfg, router)
 
 	go func() {
 		if err := httpServer.Run(); err != nil {

@@ -24,24 +24,22 @@ type DB struct {
 	*sql.DB
 }
 
-func New(ctx context.Context, config *Config) (*DB, error) {
+func New(ctx context.Context, config *Config) DB {
 	logs := logger.GetLoggerFromCtx(ctx)
 
 	dsn := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable host=%s port=%s", config.UserName, config.Password, config.DBName, config.Host, config.Port)
 
 	db, err := sql.Open("postgres", dsn)
 	if err != nil {
-		logs.Error(ctx, "can`t connect to database", zap.String("error:", err.Error()))
-		return nil, err
+		logs.Fatal(ctx, "can`t connect to database", zap.String("error:", err.Error()))
 	}
 	defer db.Close()
 
 	if err := db.Ping(); err != nil {
-		logs.Error(ctx, "failed connecting to database", zap.String("error:", err.Error()))
-		return nil, err
+		logs.Fatal(ctx, "failed connecting to database", zap.String("error:", err.Error()))
 	}
 
 	logs.Info(ctx, "database connected")
 
-	return &DB{db}, nil
+	return DB{db}
 }
