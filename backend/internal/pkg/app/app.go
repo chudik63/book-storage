@@ -7,6 +7,7 @@ import (
 	"book-storage/internal/server"
 	"book-storage/internal/service"
 	transport "book-storage/internal/transport/http"
+	"book-storage/pkg/hasher"
 	"book-storage/pkg/logger"
 	"context"
 	"os"
@@ -17,19 +18,21 @@ import (
 )
 
 func Run(ctx context.Context, cfg *config.Config) {
-	// infrastructure
+	// Infrastructure
 	logs := logger.GetLoggerFromCtx(ctx)
 
 	db := postgres.New(ctx, &cfg.Config)
 
-	// repos, serivices and API handlers
+	hasher := hasher.New(cfg.LocalParameter)
+
+	// Repos, serivices and API handlers
 	userRepository := repository.NewUserRepository(db)
 
-	userService := service.NewUserService(userRepository)
+	userService := service.NewUserService(userRepository, hasher)
 
 	handler := transport.NewHandler(userService)
 
-	// http server
+	// HTTP server
 	srv := server.NewServer(cfg, handler.Init(cfg))
 
 	go func() {
