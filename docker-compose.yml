@@ -1,38 +1,34 @@
 services:
   bookstorage:
-    build: ./backend
-    dockerfile: Dockerfile
+    build: .
     restart: always
     depends_on:
-      - postgres
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_PORT: ${POSTGRES_PORT}
-      POSTGRES_HOST: ${POSTGRES_HOST}
-      SERVER_PORT: ${SERVER_PORT}
-      MIGRATIONS_PATH: ${MIGRATIONS_PATH}
+      postgres:
+        conditon: service_healthy
+    env_file:
+      - .env
     ports:
       - "${SERVER_PORT}:${SERVER_PORT}"
     networks:
       - bookstorage_net
-
+ 
   postgres:
     image: postgres:15
     container_name: postgres_container
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_PORT: ${POSTGRES_PORT}
-      POSTGRES_HOST: ${POSTGRES_HOST}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - .env
     ports:
       - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     networks:
       - bookstorage_net
+   
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:
