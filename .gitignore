@@ -1,4 +1,2 @@
 configs/
-TODO
-.vscode/
-postgres.session.sql
+.env
