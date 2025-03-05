@@ -4,7 +4,7 @@ services:
     restart: always
     depends_on:
       postgres:
-        conditon: service_healthy
+        condition: service_healthy
     env_file:
       - .env
     ports:
@@ -23,7 +23,6 @@ services:
       - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     networks:
       - bookstorage_net
-   
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
