@@ -13,11 +13,11 @@ import (
 )
 
 type Config struct {
-	UserName string `env:"POSTGRES_USER"`
-	Password string `env:"POSTGRES_PASSWORD"`
-	Host     string `env:"POSTGRES_HOST"`
-	Port     string `env:"POSTGRES_PORT"`
-	DBName   string `env:"POSTGRES_DB"`
+	UserName string `env:"POSTGRES_USER" env-default:"root"`
+	Password string `env:"POSTGRES_PASSWORD" env-default:"password"`
+	Host     string `env:"POSTGRES_HOST" env-default:"localhost"`
+	Port     string `env:"POSTGRES_PORT" env-default:"5432"`
+	DBName   string `env:"POSTGRES_DB" env-default:"bookstorage"`
 }
 
 type DB struct {

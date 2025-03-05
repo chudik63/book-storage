@@ -9,16 +9,15 @@ import (
 
 type Config struct {
 	postgres.Config
-	MigrationsPath string `env:"MIGRATIONS_PATH"`
-	ServerPort     string `env:"SERVER_PORT"`
+	MigrationsPath string `env:"MIGRATIONS_PATH" env-default:"migrations"`
+	ServerPort     string `env:"SERVER_PORT" env-default:"80"`
+	LocalParameter string `env:"LOCAL_PARAMETER" env-default:""`
 }
 
 func New() (*Config, error) {
 	cfg := Config{}
 
-	// err := cleanenv.ReadEnv(&cfg)
-
-	err := cleanenv.ReadConfig("configs/local.env", &cfg)
+	err := cleanenv.ReadEnv(&cfg)
 
 	if cfg == (Config{}) {
 		return nil, errors.New("config is empty")

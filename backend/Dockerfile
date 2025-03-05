@@ -4,7 +4,7 @@ WORKDIR /build
 
 COPY go.mod go.sum ./     
 
-RUN go mod download      
+RUN go clean --modcache && go mod download      
 
 COPY . .       
 
@@ -17,6 +17,8 @@ RUN apk --no-cache add ca-certificates
 WORKDIR /root/
 
 COPY --from=build /build/bookstorage .
+
+COPY --from=build /build/.env .
 
 COPY --from=build /build/migrations ./migrations
 
