@@ -10,7 +10,7 @@ import (
 type Config struct {
 	postgres.Config
 	MigrationsPath string `env:"MIGRATIONS_PATH" env-default:"migrations"`
-	ServerPort     string `env:"SERVER_PORT" env-default:"80"`
+	ServerPort     string `env:"SERVER_PORT" env-default:"8080"`
 	LocalParameter string `env:"LOCAL_PARAMETER" env-default:""`
 }
 
