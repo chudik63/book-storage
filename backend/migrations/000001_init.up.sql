@@ -1,9 +1,11 @@
 CREATE TABLE IF NOT EXISTS users (
     id serial PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    login VARCHAR(255) NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL
+    name VARCHAR(20) NOT NULL,
+    login VARCHAR(12) NOT NULL,
+    password_hash VARCHAR(255) UNIQUE,
+    password_salt VARCHAR(255) UNIQUE,
+    email VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS storages (
