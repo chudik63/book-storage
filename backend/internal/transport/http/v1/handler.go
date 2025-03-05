@@ -8,7 +8,7 @@ import (
 )
 
 type UserService interface {
-	SignUp(ctx context.Context, user *models.User) error
+	SignUp(ctx context.Context, user *models.SignUpInput) error
 	Read(ctx context.Context, userID int64) (*models.User, error)
 	Update(ctx context.Context, user *models.User) error
 	Delete(ctx context.Context, userID int64) error
@@ -32,5 +32,5 @@ func (h *Handler) Init(api *gin.RouterGroup) {
 }
 
 func (h *Handler) errorResponse(c *gin.Context, code int, msg string) {
-	c.AbortWithStatusJSON(code, response{msg})
+	c.AbortWithStatusJSON(code, models.Response{Message: msg})
 }

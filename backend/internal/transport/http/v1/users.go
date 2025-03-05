@@ -2,6 +2,7 @@ package v1
 
 import (
 	"book-storage/internal/models"
+	"book-storage/pkg/email"
 	"errors"
 	"net/http"
 
@@ -18,19 +19,38 @@ func (h *Handler) InitUserRoutes(api *gin.RouterGroup) {
 }
 
 func (h *Handler) userSignUp(c *gin.Context) {
-	var inp signUpInput
+	var inp models.SignUpInput
 	if err := c.BindJSON(&inp); err != nil {
 		h.errorResponse(c, http.StatusBadGateway, "invalid input")
 
 		return
 	}
 
-	err := h.userService.SignUp(c.Request.Context(), &models.User{
-		Login:    inp.Login,
-		Name:     inp.Name,
-		Password: inp.Password,
-		Email:    inp.Email,
-	})
+	if len(inp.Password) > 12 {
+		h.errorResponse(c, http.StatusBadGateway, models.ErrPasswordIsTooLong.Error())
+
+		return
+	}
+
+	if len(inp.Login) > 12 {
+		h.errorResponse(c, http.StatusBadGateway, models.ErrLoginIsTooLong.Error())
+
+		return
+	}
+
+	if len(inp.Name) > 20 {
+		h.errorResponse(c, http.StatusBadGateway, models.ErrNameIsTooLong.Error())
+
+		return
+	}
+
+	if !email.IsValid(inp.Email) {
+		h.errorResponse(c, http.StatusBadGateway, models.ErrEmailFormat.Error())
+
+		return
+	}
+
+	err := h.userService.SignUp(c.Request.Context(), &inp)
 
 	if err != nil {
 
