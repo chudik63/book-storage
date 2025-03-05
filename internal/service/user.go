@@ -11,8 +11,6 @@ import (
 type UserRepository interface {
 	Create(ctx context.Context, user *models.User) error
 	GetByCredentials(ctx context.Context, equations repository.Creds) (*models.User, error)
-	Update(ctx context.Context, user *models.User) error
-	Delete(ctx context.Context, userID int64) error
 }
 
 type Hasher interface {
@@ -67,16 +65,4 @@ func (s *UserService) SignUp(ctx context.Context, inp *models.SignUpInput) error
 	}
 
 	return s.repo.Create(ctx, user)
-}
-
-func (s *UserService) Read(ctx context.Context, userID int64) (*models.User, error) {
-	return s.repo.GetByCredentials(ctx, repository.Creds{"id": userID})
-}
-
-func (s *UserService) Update(ctx context.Context, user *models.User) error {
-	return s.repo.Update(ctx, user)
-}
-
-func (s *UserService) Delete(ctx context.Context, userID int64) error {
-	return s.repo.Delete(ctx, userID)
 }

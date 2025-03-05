@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 func (h *Handler) InitUserRoutes(api *gin.RouterGroup) {
@@ -64,6 +65,8 @@ func (h *Handler) userSignUp(c *gin.Context) {
 
 		return
 	}
+
+	h.logs.Info(c.Request.Context(), "User created", zap.String("name", inp.Name), zap.String("login", inp.Login), zap.String("email", inp.Email))
 
 	c.Status(http.StatusCreated)
 }

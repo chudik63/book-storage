@@ -7,7 +7,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"strconv"
 
 	sq "github.com/Masterminds/squirrel"
 )
@@ -56,30 +55,8 @@ func (r *UserRepository) GetByCredentials(ctx context.Context, equations Creds) 
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, models.ErrNotFound
 		}
-		return nil, fmt.Errorf("failed to get by credential: %w", err)
+		return nil, fmt.Errorf("failed to get by credentials: %w", err)
 	}
 
 	return &user, nil
-}
-
-func (r *UserRepository) Update(ctx context.Context, user *models.User) error {
-	_, err := sq.Update("public.user").
-		Set("name", user.Name).
-		Set("password", user.Password).
-		Where(sq.Eq{"id": user.ID}).
-		PlaceholderFormat(sq.Dollar).
-		RunWith(r.db).
-		Exec()
-
-	return err
-}
-
-func (r *UserRepository) Delete(ctx context.Context, userID int64) error {
-	_, err := sq.Delete("public.users").
-		Where(sq.Eq{"id": strconv.FormatInt(userID, 10)}).
-		PlaceholderFormat(sq.Dollar).
-		RunWith(r.db).
-		Exec()
-
-	return err
 }

@@ -30,7 +30,7 @@ func Run(ctx context.Context, cfg *config.Config) {
 
 	userService := service.NewUserService(userRepository, hasher)
 
-	handler := transport.NewHandler(userService)
+	handler := transport.NewHandler(userService, logs)
 
 	// HTTP server
 	srv := server.NewServer(cfg, handler.Init(cfg))

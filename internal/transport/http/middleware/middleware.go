@@ -3,20 +3,23 @@ package middleware
 import (
 	"book-storage/pkg/logger"
 	"context"
-	"net/http"
 
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
-func Middleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		reqID := r.Header.Get("X-Request-ID")
+func Middleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		reqID := c.Request.Header.Get("X-Request-ID")
 		if reqID == "" {
 			reqID = uuid.New().String()
 		}
-		ctx := context.WithValue(r.Context(), logger.RequestID, reqID)
 
-		next.ServeHTTP(w, r.WithContext(ctx))
-	})
+		ctx := context.WithValue(c.Request.Context(), logger.RequestID, reqID)
+
+		c.Request = c.Request.WithContext(ctx)
+
+		c.Next()
+	}
 
 }
