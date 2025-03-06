@@ -7,6 +7,12 @@ type SignUpInput struct {
 	Email    string `json:"email"`
 }
 
+type SendEmailInput struct {
+	UserName string
+	Email    string
+	Code     string
+}
+
 type Response struct {
 	Message string `json:"message"`
 }

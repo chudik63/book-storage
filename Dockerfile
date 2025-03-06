@@ -22,4 +22,6 @@ COPY --from=build /build/.env .
 
 COPY --from=build /build/migrations ./migrations
 
+COPY --from=build /build/templates ./templates
+
 CMD ["./bookstorage"]

@@ -5,7 +5,9 @@ CREATE TABLE IF NOT EXISTS users (
     password_hash VARCHAR(255) UNIQUE,
     password_salt VARCHAR(255) UNIQUE,
     email VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP NOT NULL
+    verification_code VARCHAR(6),
+    created_at TIMESTAMP NOT NULL,
+    active BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS storages (

@@ -3,6 +3,7 @@ package service
 import (
 	"book-storage/internal/models"
 	"book-storage/internal/repository"
+	"book-storage/pkg/otp"
 	"context"
 	"errors"
 	"time"
@@ -19,15 +20,22 @@ type Hasher interface {
 	DoPasswordsMatch(hashedPassword, currPassword, salt string) bool
 }
 
+type EmailService interface {
+	SendVerificationEmail(context context.Context, inp *models.SendEmailInput)
+}
+
 type UserService struct {
 	repo UserRepository
 	hash Hasher
+
+	emailService EmailService
 }
 
-func NewUserService(repo UserRepository, hash Hasher) *UserService {
+func NewUserService(repo UserRepository, hash Hasher, es EmailService) *UserService {
 	return &UserService{
-		repo: repo,
-		hash: hash,
+		repo:         repo,
+		hash:         hash,
+		emailService: es,
 	}
 }
 
@@ -55,14 +63,27 @@ func (s *UserService) SignUp(ctx context.Context, inp *models.SignUpInput) error
 
 	hashedPassword := s.hash.HashPassword(inp.Password, salt)
 
+	code := otp.GenerateCode()
+
 	user = &models.User{
-		Login:     inp.Login,
-		Name:      inp.Name,
-		Email:     inp.Email,
-		Password:  hashedPassword,
-		Salt:      string(salt),
-		CreatedAt: time.Now(),
+		Login:            inp.Login,
+		Name:             inp.Name,
+		Email:            inp.Email,
+		Password:         hashedPassword,
+		Salt:             string(salt),
+		VerificationCode: code,
+		CreatedAt:        time.Now(),
 	}
 
-	return s.repo.Create(ctx, user)
+	if err := s.repo.Create(ctx, user); err != nil {
+		return err
+	}
+
+	go s.emailService.SendVerificationEmail(ctx, &models.SendEmailInput{
+		UserName: inp.Name,
+		Email:    inp.Email,
+		Code:     code,
+	})
+
+	return nil
 }

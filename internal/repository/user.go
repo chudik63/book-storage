@@ -23,8 +23,8 @@ func NewUserRepository(db postgres.DB) *UserRepository {
 
 func (r *UserRepository) Create(ctx context.Context, user *models.User) error {
 	_, err := sq.Insert("users").
-		Columns("login", "name", "email", "password_hash", "password_salt", "created_at").
-		Values(user.Login, user.Name, user.Email, user.Password, user.Salt, user.CreatedAt).
+		Columns("login", "name", "email", "password_hash", "password_salt", "verification_code", "created_at").
+		Values(user.Login, user.Name, user.Email, user.Password, user.Salt, user.VerificationCode, user.CreatedAt).
 		PlaceholderFormat(sq.Dollar).
 		RunWith(r.db).
 		Exec()
