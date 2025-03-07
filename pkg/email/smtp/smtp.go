@@ -3,9 +3,12 @@ package smtp
 import (
 	"book-storage/internal/models"
 	"book-storage/pkg/email"
+	"crypto/tls"
 	"fmt"
+	"time"
 
 	"github.com/go-gomail/gomail"
+	"github.com/google/uuid"
 )
 
 type SMTPSender struct {
@@ -32,9 +35,14 @@ func (s *SMTPSender) Send(input SendEmailInput) error {
 	msg.SetHeader("From", s.from)
 	msg.SetHeader("To", input.To)
 	msg.SetHeader("Subject", input.Subject)
+	msg.SetHeader("Date", time.Now().Format(time.RFC1123Z))
+	msg.SetHeader("MIME-Version", "1.0")
+	msg.SetHeader("Message-ID", fmt.Sprintf("<%s@%s>", uuid.NewString(), "yandex.ru"))
+	msg.SetHeader("Content-Type", "text/html; charset=UTF-8")
 	msg.SetBody("text/html", input.Body)
 
 	dialer := gomail.NewDialer(s.host, s.port, s.from, s.pass)
+	dialer.TLSConfig = &tls.Config{ServerName: s.host}
 	if err := dialer.DialAndSend(msg); err != nil {
 		return fmt.Errorf("failed to sent email: %w", err)
 	}

@@ -3,11 +3,8 @@ package service
 import (
 	"book-storage/internal/models"
 	"book-storage/pkg/email/smtp"
-	"book-storage/pkg/logger"
 	"context"
 	"fmt"
-
-	"go.uber.org/zap"
 )
 
 const (
@@ -41,7 +38,7 @@ func NewEmailService(s SMTPSender, vsub, vtempl, dom string) *emailService {
 }
 
 func (s *emailService) SendVerificationEmail(ctx context.Context, inp *models.SendEmailInput) {
-	logs := logger.GetLoggerFromCtx(ctx)
+	//logs := logger.GetLoggerFromCtx(ctx)
 
 	templateInput := verificationEmailInput{
 		UserName:         inp.UserName,
@@ -51,15 +48,15 @@ func (s *emailService) SendVerificationEmail(ctx context.Context, inp *models.Se
 	sendInput := smtp.SendEmailInput{Subject: s.verificationSubject, To: inp.Email}
 
 	if err := sendInput.GenerateBodyFromHTML(s.verificationTemplate, templateInput); err != nil {
-		logs.Error(ctx, "failed generate body from html template", zap.Error(err))
-
+		//logs.Error(ctx, "failed generate body from html template", zap.Error(err))
+		fmt.Print(err)
 		return
 	}
 
 	err := s.sender.Send(sendInput)
 	if err != nil {
-		logs.Error(ctx, "failed send verification email", zap.Error(err))
-
+		//logs.Error(ctx, "failed send verification email", zap.Error(err))
+		fmt.Print(err)
 		return
 	}
 }
